@@ -9,9 +9,20 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.animation.rigging": {
+      "version": "1.4.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.4.1",
+        "com.unity.test-framework": "1.1.24",
+        "com.unity.modules.animation": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.burst": {
       "version": "1.8.26",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.2.1",
@@ -211,6 +222,13 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "info.flandre.coacd": {
+      "version": "https://github.com/SarahWeiii/CoACD.git?path=/Packages/info.flandre.coacd#unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "9dd8431f3b2e7e4654e5a6284e3b8c36b4071c2f"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
