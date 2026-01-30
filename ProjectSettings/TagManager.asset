@@ -16,10 +16,10 @@ TagManager:
   - Feet
   - Projectile
   - DontCollideWithProjectile
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - IgnoreInteraction
+  - SnapPoint
+  - Module
   - 
   - 
   - 

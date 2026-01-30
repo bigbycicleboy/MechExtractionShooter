@@ -8,33 +8,41 @@ public class PlayerMovement : MonoBehaviourPun
     [SerializeField] private float sprintSpeed = 8f;
     [SerializeField] private float crouchSpeed = 2.5f;
     [SerializeField] private float acceleration = 10f;
-    [SerializeField] private float deceleration = 10f;
     
     [Header("Jump Settings")]
     [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float gravity = 20f;
-    [SerializeField] private float maxFallSpeed = 20f;
+    [SerializeField] private float groundDrag = 5f;
+    [SerializeField] private float airDrag = 0.5f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
     
     [Header("Ground Check")]
-    [SerializeField] private float groundCheckDistance = 0.2f;
+    [SerializeField] private float groundCheckDistance = 0.3f;
     [SerializeField] private LayerMask groundLayer = -1;
+    [SerializeField] private Transform groundCheckPoint;
     
     [Header("Crouch Settings")]
     [SerializeField] private float crouchHeight = 1f;
     [SerializeField] private float standHeight = 2f;
     [SerializeField] private float crouchTransitionSpeed = 10f;
     
+    [Header("Rigidbody Settings")]
+    [SerializeField] private float playerMass = 70f;
+    [SerializeField] private float maxSlopeAngle = 45f;
+    
     [Header("References")]
     [SerializeField] private Transform cameraTransform;
-    [SerializeField] private CharacterController characterController;
+    [SerializeField] private CapsuleCollider capsuleCollider;
+    [SerializeField] private AudioSource footstepAudioSource;
+    
+    // Components
+    private Rigidbody rb;
     
     // Movement state
-    private Vector3 moveVelocity;
-    private float verticalVelocity;
     private bool isGrounded;
     private bool isCrouching;
     private float currentHeight;
-    bool ableToWalk = true;
+    private bool ableToWalk = true;
+    private float jumpBufferCounter;
     
     // Input
     private Vector2 moveInput;
@@ -42,49 +50,44 @@ public class PlayerMovement : MonoBehaviourPun
     private bool sprintHeld;
     private bool crouchHeld;
     
+    // Platform tracking
+    private Transform currentPlatform;
+    
     void Start()
     {
-        // Only setup for local player
-        if (!photonView.IsMine)
-        {
-            // Disable components for non-local players
-            if (cameraTransform != null && cameraTransform.GetComponent<Camera>() != null)
-            {
-                cameraTransform.GetComponent<Camera>().gameObject.SetActive(false);
-            }
-            
-            // Optionally disable audio listener
-            AudioListener listener = GetComponentInChildren<AudioListener>();
-            if (listener != null)
-            {
-                listener.enabled = false;
-            }
-            
-            return;
-        }
-        
-        // Auto-setup if references not assigned
         if (cameraTransform == null)
         {
             cameraTransform = Camera.main?.transform;
         }
-        
-        if (characterController == null)
+
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            characterController = GetComponent<CharacterController>();
-            
-            // If no CharacterController exists, add one
-            if (characterController == null)
-            {
-                characterController = gameObject.AddComponent<CharacterController>();
-                characterController.height = standHeight;
-                characterController.radius = 0.5f;
-            }
+            rb = gameObject.AddComponent<Rigidbody>();
         }
+        
+        rb.mass = playerMass;
+        rb.linearDamping = groundDrag;
+        
+        capsuleCollider = GetComponentInChildren<CapsuleCollider>();
         
         currentHeight = standHeight;
     }
-    
+
+    public void ToggleMouseVisibility(bool visible)
+    {
+        if (visible)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     void Update()
     {
         // Only process input for local player
@@ -99,20 +102,40 @@ public class PlayerMovement : MonoBehaviourPun
         
         // Handle crouching
         HandleCrouch();
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else if(Input.GetKeyDown(KeyCode.F1))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+    
+    void FixedUpdate()
+    {
+        // Only process physics for local player
+        if (!photonView.IsMine)
+            return;
         
-        // Check if grounded (CharacterController has built-in ground detection)
+        // Check if grounded
         CheckGrounded();
         
-        // Calculate movement
-        CalculateMovement();
-        
-        // Handle jumping and gravity
-        HandleVerticalMovement();
+        // Update drag based on grounded state
+        rb.linearDamping = isGrounded ? groundDrag : airDrag;
         
         if(!ableToWalk) return;
         
-        // Apply final movement
-        ApplyMovement();
+        // Handle movement
+        HandleMovement();
+        
+        jumpBufferCounter -= Time.fixedDeltaTime;
+
+        // Handle jumping
+        HandleJump();
     }
 
     public void MakeAbleToWalk()
@@ -130,34 +153,66 @@ public class PlayerMovement : MonoBehaviourPun
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
         
-        jumpPressed = Input.GetButtonDown("Jump");
+        if (Input.GetButtonDown("Jump"))
+        {
+            jumpBufferCounter = jumpBufferTime;
+        }
         sprintHeld = Input.GetKey(KeyCode.LeftShift);
         crouchHeld = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.C);
+
+        if(sprintHeld)
+        {
+            footstepAudioSource.pitch = 1.2f;
+        }
+        else
+        {
+            footstepAudioSource.pitch = 1f;
+        }
+        if(footstepAudioSource != null)
+        {
+            bool isMoving = moveInput.magnitude > 0.1f && isGrounded && ableToWalk;
+            if (isMoving && !footstepAudioSource.isPlaying)
+            {
+                footstepAudioSource.Play();
+            }
+            else if (!isMoving && footstepAudioSource.isPlaying)
+            {
+                footstepAudioSource.Pause();
+            }
+        }
     }
     
     void CheckGrounded()
     {
-        // Use CharacterController's built-in ground detection
-        isGrounded = characterController.isGrounded;
+        // Raycast from ground check point
+        Vector3 rayStart = groundCheckPoint.position;
+        Debug.DrawRay(rayStart, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
         
-        // Additional raycast check for more reliable detection
-        if (!isGrounded)
+        RaycastHit hit;
+        isGrounded = Physics.Raycast(rayStart, Vector3.down, out hit, groundCheckDistance, groundLayer);
+        
+        // Track platform if we're on one
+        if (isGrounded && hit.collider != null)
         {
-            Vector3 rayStart = transform.position + characterController.center - new Vector3(0, characterController.height / 2f, 0);
-            Debug.DrawRay(rayStart, Vector3.down * groundCheckDistance, Color.red);
-            
-            isGrounded = Physics.Raycast(rayStart, Vector3.down, groundCheckDistance, groundLayer);
+            // Check if we hit a moving platform (has rigidbody)
+            Rigidbody platformRb = hit.collider.attachedRigidbody;
+            if (platformRb != null && !platformRb.isKinematic)
+            {
+                currentPlatform = platformRb.transform;
+            }
+            else
+            {
+                currentPlatform = null;
+            }
         }
         else
         {
-            Vector3 rayStart = transform.position + characterController.center - new Vector3(0, characterController.height / 2f, 0);
-            Debug.DrawRay(rayStart, Vector3.down * groundCheckDistance, Color.green);
+            currentPlatform = null;
         }
     }
     
-    void CalculateMovement()
+    void HandleMovement()
     {
-        // Get camera-relative directions (flattened to horizontal plane)
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
         
@@ -166,88 +221,59 @@ public class PlayerMovement : MonoBehaviourPun
         forward.Normalize();
         right.Normalize();
         
-        // Calculate desired move direction
         Vector3 desiredMoveDirection = (right * moveInput.x + forward * moveInput.y).normalized;
         
-        // Determine target speed based on state
         float targetSpeed = walkSpeed;
         
         if (isCrouching)
         {
             targetSpeed = crouchSpeed;
         }
-        else if (sprintHeld && moveInput.y > 0) // Only sprint when moving forward
+        else if (sprintHeld && moveInput.y > 0)
         {
             targetSpeed = sprintSpeed;
         }
-        
-        // Calculate target velocity
+
         Vector3 targetVelocity = desiredMoveDirection * targetSpeed;
-        
-        // Smoothly interpolate to target velocity
-        float currentAcceleration = (moveInput.sqrMagnitude > 0) ? acceleration : deceleration;
-        moveVelocity = Vector3.Lerp(moveVelocity, targetVelocity, currentAcceleration * Time.deltaTime);
+            
+        targetVelocity.y = rb.linearVelocity.y;
+            
+        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
     }
     
-    void HandleVerticalMovement()
+    void HandleJump()
     {
-        if (isGrounded)
+        if (jumpBufferCounter > 0f && isGrounded && !isCrouching)
         {
-            // Reset vertical velocity when grounded
-            if (verticalVelocity < 0)
-            {
-                verticalVelocity = -2f; // Small downward force to stay grounded
-            }
-            
-            // Handle jump
-            if (jumpPressed && !isCrouching)
-            {
-                verticalVelocity = jumpForce;
-            }
-        }
-        else
-        {
-            // Apply gravity when in air
-            verticalVelocity -= gravity * Time.deltaTime;
-            
-            // Clamp fall speed
-            verticalVelocity = Mathf.Max(verticalVelocity, -maxFallSpeed);
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+            jumpBufferCounter = 0f;
         }
     }
-    
+
     void HandleCrouch()
     {
-        // Toggle or hold crouch logic
         if (crouchHeld)
         {
             isCrouching = true;
         }
         else if (isCrouching)
         {
-            // Check if we can stand up (no ceiling above)
             if (CanStandUp())
             {
                 isCrouching = false;
             }
         }
         
-        // Smoothly transition height
         float targetHeight = isCrouching ? crouchHeight : standHeight;
         currentHeight = Mathf.Lerp(currentHeight, targetHeight, crouchTransitionSpeed * Time.deltaTime);
         
-        // Update CharacterController height
-        characterController.height = currentHeight;
-        
-        // Adjust center to keep feet on ground
-        Vector3 center = characterController.center;
-        center.y = currentHeight / 2f;
-        characterController.center = center;
+        capsuleCollider.height = currentHeight;
+        capsuleCollider.center = new Vector3(0, currentHeight / 2f - 1, 0);
     }
     
     bool CanStandUp()
     {
-        // Check for obstacles above
-        Vector3 rayStart = transform.position + characterController.center;
+        Vector3 rayStart = transform.position + new Vector3(0, currentHeight / 2f, 0);
         float checkDistance = (standHeight - crouchHeight) / 2f + 0.2f;
         
         Debug.DrawRay(rayStart, Vector3.up * checkDistance, Color.yellow);
@@ -255,20 +281,24 @@ public class PlayerMovement : MonoBehaviourPun
         return !Physics.Raycast(rayStart, Vector3.up, checkDistance, groundLayer);
     }
     
-    void ApplyMovement()
+    void OnCollisionEnter(Collision collision)
     {
-        // Combine horizontal and vertical movement
-        Vector3 finalMovement = moveVelocity + Vector3.up * verticalVelocity;
-        
-        // Use CharacterController.Move for collision detection
-        // This automatically handles collisions and works inside moving parents
-        characterController.Move(finalMovement * Time.deltaTime);
+        Rigidbody otherRb = collision.rigidbody;
+        if (otherRb != null && otherRb.mass > playerMass * 5f)
+        {
+        }
     }
-    
-    // Public getters for other scripts
+
     public bool IsGrounded() => isGrounded;
     public bool IsCrouching() => isCrouching;
     public bool IsSprinting() => sprintHeld && !isCrouching && moveInput.y > 0;
-    public Vector3 GetVelocity() => moveVelocity + Vector3.up * verticalVelocity;
-    public float GetSpeedPercentage() => moveVelocity.magnitude / sprintSpeed;
+    public Vector3 GetVelocity() => rb != null ? rb.linearVelocity : Vector3.zero;
+    public float GetSpeedPercentage() 
+    { 
+        if (rb == null) return 0f;
+        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        return horizontalVel.magnitude / sprintSpeed;
+    }
+    public Rigidbody GetRigidbody() => rb;
+    public Transform GetCurrentPlatform() => currentPlatform;
 }

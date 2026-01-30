@@ -1,6 +1,5 @@
 using UnityEngine;
 using Photon.Pun;
-using Photon.Pun.UtilityScripts;
 
 public class Cannon : MonoBehaviourPun
 {
@@ -13,11 +12,10 @@ public class Cannon : MonoBehaviourPun
     public AudioSource firesound;
     float lastFireTime;
     bool isFireable;
-    private int currentGunnerID = -1; // Stores the PhotonView ID of the current gunner
+    private int currentGunnerID = -1;
 
     void Update()
     {
-        // Only process input if the local player is the current gunner
         if (!isFireable || currentGunnerID != PhotonNetwork.LocalPlayer.ActorNumber)
             return;
 
@@ -37,7 +35,6 @@ public class Cannon : MonoBehaviourPun
 
     void Fire()
     {
-        // Spawn projectile across the network
         GameObject projectile = PhotonNetwork.Instantiate(
             projectilePrefab.name, 
             firePoint.position, 
@@ -50,7 +47,6 @@ public class Cannon : MonoBehaviourPun
             rb.AddForce(firePoint.forward * fireForce, ForceMode.Force);
         }
 
-        // Play sound and camera shake locally via RPC
         photonView.RPC("PlayFireEffects", RpcTarget.All);
         
         lastFireTime = Time.time;
@@ -64,7 +60,6 @@ public class Cannon : MonoBehaviourPun
             firesound.PlayOneShot(firesound.clip);
         }
 
-        // Only shake camera for the local player who is gunner
         if (currentGunnerID == PhotonNetwork.LocalPlayer.ActorNumber && CameraShake.instance != null)
         {
             CameraShake.instance.ShakeCamera(0.15f, 0.05f);
@@ -73,7 +68,6 @@ public class Cannon : MonoBehaviourPun
 
     public void MakeFireable()
     {
-        // Set the current player as the gunner
         photonView.RPC("SetGunner", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber);
         PhotonView.Find(GetLocalPlayerViewID()).GetComponent<PlayerMovement>().MakeUnableToWalk();
         isFireable = true;
@@ -81,7 +75,6 @@ public class Cannon : MonoBehaviourPun
 
     public void MakeUnfireable()
     {
-        // Clear the gunner
         photonView.RPC("SetGunner", RpcTarget.AllBuffered, -1);
         PhotonView.Find(GetLocalPlayerViewID()).GetComponent<PlayerMovement>().MakeAbleToWalk();
         isFireable = false;

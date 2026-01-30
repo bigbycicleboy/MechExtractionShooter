@@ -1,15 +1,23 @@
 using UnityEngine;
 using Photon.Pun;
 
-public class CameraManager : MonoBehaviourPunCallbacks
+public class CameraManager : MonoBehaviourPun
 {
     public MonoBehaviour mechCamera;
     public MonoBehaviour playerCamera;
 
-    public override void OnJoinedRoom()
+    void Update()
     {
-        mechCamera = FindFirstObjectByType<MechCameraController>();
-        playerCamera = FindFirstObjectByType<PlayerCameraController>();
+        if (!photonView.IsMine || !PhotonNetwork.IsConnectedAndReady) return;
+
+        if (mechCamera == null)
+        {
+            mechCamera = FindFirstObjectByType<MechCameraController>();
+        }
+        if (playerCamera == null)
+        {
+            playerCamera = FindFirstObjectByType<PlayerCameraController>();
+        }
     }
 
     public void SwitchCamera(string cameraControllerName)

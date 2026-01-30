@@ -14,14 +14,14 @@ public class Interactable : MonoBehaviourPun
     [SerializeField] private string togglePromptOn = "Press E to stand";
     
     [Header("Network Settings")]
-    [SerializeField] private bool syncInteractionAcrossNetwork = true;
+    [SerializeField] private bool syncInteraction = true;
     [SerializeField] private bool singleUserOnly = false; // Only one player can use at a time
     
     [Header("Events")]
     [SerializeField] private UnityEvent onInteract;
     [SerializeField] private UnityEvent onToggleOn;
     [SerializeField] private UnityEvent onToggleOff;
-    
+
     private bool hasInteracted = false;
     private float lastInteractionTime = -999f;
     private bool isToggled = false;
@@ -50,7 +50,7 @@ public class Interactable : MonoBehaviourPun
         }
         
         // Send interaction across network if enabled
-        if (syncInteractionAcrossNetwork)
+        if (syncInteraction)
         {
             photonView.RPC("RPC_Interact", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber);
         }
@@ -159,7 +159,7 @@ public class Interactable : MonoBehaviourPun
     
     public void SetToggled(bool toggled)
     {
-        if (syncInteractionAcrossNetwork)
+        if (syncInteraction)
         {
             photonView.RPC("RPC_SetToggled", RpcTarget.AllBuffered, toggled);
         }
@@ -177,7 +177,7 @@ public class Interactable : MonoBehaviourPun
     
     public void ResetToggle()
     {
-        if (syncInteractionAcrossNetwork)
+        if (syncInteraction)
         {
             photonView.RPC("RPC_ResetToggle", RpcTarget.AllBuffered);
         }

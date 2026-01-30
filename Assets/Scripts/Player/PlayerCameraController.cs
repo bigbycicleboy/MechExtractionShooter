@@ -29,9 +29,6 @@ public class PlayerCameraController : MonoBehaviourPunCallbacks
     void Start()
     {
         target = PhotonView.Find(GetLocalPlayerViewID()).transform;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     void Update()

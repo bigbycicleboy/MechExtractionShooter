@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public class QuadrupedMechIK : MonoBehaviour
@@ -30,6 +31,8 @@ public class QuadrupedMechIK : MonoBehaviour
     [SerializeField] private float stepDistance = 1.5f;
     [SerializeField] private float stepSpeed = 8f;
     [SerializeField] private float bodyHeight = 2f;
+    [SerializeField] private Vector3 footPositionOffset = Vector3.zero;
+    [SerializeField] private Vector3 footRotationOffset;
     
     [Header("Ground Detection")]
     [SerializeField] private LayerMask groundLayer;
@@ -54,20 +57,35 @@ public class QuadrupedMechIK : MonoBehaviour
     void Start()
     {
         lastPosition = transform.position;
-        
-        // Store all legs in array for easier iteration
         allLegs = new Leg[] { frontLeft, frontRight, backLeft, backRight };
         
-        // Initialize default offsets
+        // Initialize and plant all feet on the ground
         foreach (var leg in allLegs)
         {
-            if (leg != null && leg.footTarget != null)
+            if (leg != null && leg.footTarget != null && leg.footBone != null)
             {
+                // Position target under the foot bone
+                Vector3 footPos = leg.footBone.position;
+                
+                // Raycast down to find ground
+                RaycastHit hit;
+                if (Physics.Raycast(footPos + Vector3.up * 2f, Vector3.down, out hit, groundCheckDistance, groundLayer))
+                {
+                    leg.footTarget.position = hit.point;
+                }
+                else
+                {
+                    footPos.y = transform.position.y - bodyHeight;
+                    leg.footTarget.position = footPos;
+                }
+                
+                leg.footTarget.rotation = transform.rotation;
+
                 leg.defaultOffset = transform.InverseTransformPoint(leg.footTarget.position);
             }
         }
-    }
-
+    }    
+    
     void Update()
     {
         CalculateVelocity();
@@ -78,7 +96,6 @@ public class QuadrupedMechIK : MonoBehaviour
 
     void CalculateVelocity()
     {
-        // Calculate velocity manually since we don't have a Rigidbody
         currentVelocity = (transform.position - lastPosition) / Time.deltaTime;
         lastPosition = transform.position;
     }
@@ -214,6 +231,7 @@ public class QuadrupedMechIK : MonoBehaviour
         
         if (leg.lerpTime >= 1f)
         {
+            // When landing, make sure we're above ground
             leg.footTarget.position = leg.endPos;
             leg.footTarget.rotation = leg.endRot;
             leg.isMoving = false;
@@ -223,12 +241,15 @@ public class QuadrupedMechIK : MonoBehaviour
         
         // Arc trajectory for stepping
         Vector3 currentPos = Vector3.Lerp(leg.startPos, leg.endPos, leg.lerpTime);
+        
+        // Make sure the arc goes HIGH enough to clear the ground
         float arc = Mathf.Sin(leg.lerpTime * Mathf.PI) * stepHeight;
         currentPos.y += arc;
         
-        leg.footTarget.position = currentPos;
+        // Clamp to never go below the end position's Y
+        currentPos.y = Mathf.Max(currentPos.y, leg.endPos.y);
         
-        // Smoothly rotate to match end rotation
+        leg.footTarget.position = currentPos;
         leg.footTarget.rotation = Quaternion.Slerp(leg.startRot, leg.endRot, leg.lerpTime);
     }
 
@@ -241,31 +262,24 @@ public class QuadrupedMechIK : MonoBehaviour
             return Vector3.zero;
         }
         
-        // Use the default offset to maintain proper leg spread
         Vector3 targetPos = transform.TransformPoint(leg.defaultOffset);
+        Vector3 anticipatedPos = targetPos + currentVelocity.normalized * 0.3f;
         
-        // Project forward slightly based on velocity for anticipation
-        targetPos += currentVelocity.normalized * 0.3f;
+        // Convert local offset to world space
+        Vector3 worldOffset = transform.TransformDirection(footPositionOffset);
         
-        // Raycast to find ground
         RaycastHit hit;
-        if (Physics.Raycast(targetPos + Vector3.up * 2f, Vector3.down, out hit, groundCheckDistance, groundLayer))
+        if (Physics.Raycast(anticipatedPos + Vector3.up * 2f, Vector3.down, out hit, groundCheckDistance, groundLayer))
         {
-            // Preserve the body's Y rotation to prevent knee twisting
-            Vector3 bodyForward = transform.forward;
-            bodyForward.y = 0; // Project onto horizontal plane
-            bodyForward.Normalize();
+            targetRotation = transform.rotation * Quaternion.Euler(footRotationOffset);
             
-            // Use negative normal since feet point down
-            Quaternion yawRotation = Quaternion.LookRotation(bodyForward, -hit.normal);
-            targetRotation = yawRotation;
-            
-            return hit.point;
+            // Apply local offset in world space
+            return hit.point + Vector3.up * 0.15f + worldOffset;
         }
         
-        targetPos.y = transform.position.y - bodyHeight;
-        targetRotation = Quaternion.identity;
-        return targetPos;
+        anticipatedPos.y = transform.position.y - bodyHeight + 0.15f;
+        targetRotation = transform.rotation * Quaternion.Euler(footRotationOffset);
+        return anticipatedPos + worldOffset;
     }
 
     void PlantFoot(Leg leg)
@@ -274,22 +288,20 @@ public class QuadrupedMechIK : MonoBehaviour
         
         Vector3 desiredPos = leg.footBone.position;
         
+        // Convert local offset to world space
+        Vector3 worldOffset = transform.TransformDirection(footPositionOffset);
+        
         RaycastHit hit;
         if (Physics.Raycast(desiredPos + Vector3.up * 2f, Vector3.down, out hit, groundCheckDistance, groundLayer))
         {
-            leg.footTarget.position = Vector3.Lerp(leg.footTarget.position, hit.point, Time.deltaTime * 5f);
+            Vector3 footPos = hit.point + Vector3.up * 0.1f + worldOffset;
+            leg.footTarget.position = Vector3.Lerp(leg.footTarget.position, footPos, Time.deltaTime * 5f);
             
-            // Align rotation to surface normal while preserving body's Y rotation
-            Vector3 bodyForward = transform.forward;
-            bodyForward.y = 0;
-            bodyForward.Normalize();
-            
-            // Use negative normal since feet point down
-            Quaternion targetRotation = Quaternion.LookRotation(bodyForward, -hit.normal);
+            Quaternion targetRotation = transform.rotation * Quaternion.Euler(180f, 0f, 0f);
             leg.footTarget.rotation = Quaternion.Slerp(leg.footTarget.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
     }
-
+    
     void UpdateKneeHints()
     {
         UpdateKneeHint(frontLeft, true, -1);

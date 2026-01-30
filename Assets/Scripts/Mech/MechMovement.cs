@@ -1,91 +1,157 @@
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
 
 public class MechWalker : MonoBehaviourPun
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float turnSpeed = 100f;
-    [SerializeField] private float rotationSmoothTime = 0.1f;
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float turnSpeed = 7f;
+    [SerializeField] private float rotationSmoothTime = 0.35f;
     [SerializeField] private float rotationSensitivity = 2f;
-    
+
     [Header("Surface Alignment")]
     [SerializeField] private float alignmentSpeed = 5f;
-    [SerializeField] private float groundCheckDistance = 2f;
-    [SerializeField] private float hoverHeight = 0.5f;
+    [SerializeField] private float groundCheckDistance = 0.5f;
+    [SerializeField] private float groundedGraceTime = 0.12f;
     [SerializeField] private LayerMask groundLayer;
-    
-    [Header("Gravity")]
-    [SerializeField] private float gravity = 20f;
-    [SerializeField] private float maxFallSpeed = 20f;
-    
+    [SerializeField] private float maxSlopeAngle = 40f;
+
+    [Header("Rigidbody Settings")]
+    [SerializeField] private float groundDrag = 5f;
+    [SerializeField] private float airDrag = 0.5f;
+    [SerializeField] private float mechMass = 1000f;
+
     [Header("Ground Check Points")]
-    [SerializeField] private Transform[] footPoints; // Assign 4 foot positions
-    
+    [SerializeField] private Transform[] footPoints;
+
+    [Header("Platform Settings")]
+    [SerializeField] private Transform platformPoint;
+    [SerializeField] private float platformCheckRadius = 3f;
+    [SerializeField] private float platformRaycastHeight = 5f;
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private bool debugPlatformMovement = false;
+    [SerializeField] private bool ignorePlayerCollisions = true;
+
     [Header("Cursor Settings")]
     [SerializeField] private bool lockCursor = true;
-    
-    private Vector3 targetNormal = Vector3.up;
+
+    // Rigidbody component
+    private Rigidbody rb;
+
+    // internal state
+    private Vector3 smoothedNormal = Vector3.up;
     private float currentYawVelocity;
     private float targetYaw;
-    private float verticalVelocity = 0f;
     private bool isGrounded = false;
-
-    bool isDrivable;
-    private int currentDriverID = -1; // Stores the PhotonView ID of the current driver
-
+    private float groundedTimer = 0f;
+    private bool isDrivable = false;
+    private int currentDriverID = -1;
+    private bool autoPilotEnabled;
+    
     void Start()
     {
-        // Only lock cursor if this player is driving
-        if (isDrivable && currentDriverID == PhotonNetwork.LocalPlayer.ActorNumber && lockCursor)
+        smoothedNormal = transform.up;
+        groundedTimer = 0f;
+        
+        rb = GetComponent<Rigidbody>();
+        
+        // Configure mech rigidbody
+        rb.mass = mechMass;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        
+        if (debugPlatformMovement)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Debug.Log($"[MechWalker] Player Layer Mask: {playerLayer.value}");
+        }
+    }
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            autoPilotEnabled = !autoPilotEnabled;
         }
     }
 
     void FixedUpdate()
     {
+        // 1) Update grounded state first
         CheckIfGrounded();
-        
+
+        // 2) Update drag based on grounded state
+        rb.linearDamping = isGrounded ? groundDrag : airDrag;
+
+        // 3) Compute/refresh smoothed normal based on stable raycasts (if grounded)
         if (isGrounded)
         {
-            AlignToSurface();
+            Vector3 groundNormal = CalculateGroundNormal();
+
+            // limit steep slopes
+            float slopeAngle = Vector3.Angle(groundNormal, Vector3.up);
+            if (slopeAngle > maxSlopeAngle)
+            {
+                groundNormal = Vector3.up;
+            }
+
+            // smooth the normal
+            smoothedNormal = Vector3.Slerp(smoothedNormal, groundNormal, alignmentSpeed * Time.fixedDeltaTime);
+        }
+        else
+        {
+            smoothedNormal = Vector3.Slerp(smoothedNormal, Vector3.up, alignmentSpeed * 0.5f * Time.fixedDeltaTime);
         }
 
-        // Only allow input from the current driver
         if (isDrivable && currentDriverID == PhotonNetwork.LocalPlayer.ActorNumber)
         {
-            HandleMovement();
-            HandleRotation();
+            HandleRotationAndAlignment();
+        }
+        else if (isGrounded)
+        {
+            AlignToSurfaceOnly();
         }
 
-        HandleGravity();    
+        if (
+            (isDrivable && currentDriverID == PhotonNetwork.LocalPlayer.ActorNumber)
+            || autoPilotEnabled
+        )
+        {
+            HandleMovement();
+        }
     }
 
+    // -------------------------
+    // Driver/ownership helpers
+    // -------------------------
     public void MakeDrivable()
     {
-        // Transfer ownership to the player sitting down
         photonView.RPC("SetDriver", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber);
         PhotonView.Find(GetLocalPlayerViewID()).GetComponent<PlayerMovement>().MakeUnableToWalk();
         FindAnyObjectByType<CameraManager>().SwitchCamera("Mech");
+        
+        if(autoPilotEnabled)
+            return;
+
         isDrivable = true;
     }
 
     public void MakeUndrivable()
     {
-        // Clear the driver
+        FindAnyObjectByType<CameraManager>().SwitchCamera("Player");
         photonView.RPC("SetDriver", RpcTarget.AllBuffered, -1);
         PhotonView.Find(GetLocalPlayerViewID()).GetComponent<PlayerMovement>().MakeAbleToWalk();
-        FindAnyObjectByType<CameraManager>().SwitchCamera("Player");
+
+        if(autoPilotEnabled)
+            return;
+        
         isDrivable = false;
     }
 
     private int GetLocalPlayerViewID()
     {
         PhotonView[] allPhotonViews = FindObjectsByType<PhotonView>(FindObjectsSortMode.None);
-        
+
         foreach (PhotonView pv in allPhotonViews)
         {
             if (pv.IsMine && pv.GetComponent<PlayerMovement>() != null)
@@ -93,7 +159,7 @@ public class MechWalker : MonoBehaviourPun
                 return pv.ViewID;
             }
         }
-        
+
         return -1;
     }
 
@@ -101,7 +167,7 @@ public class MechWalker : MonoBehaviourPun
     void SetDriver(int playerActorNumber)
     {
         currentDriverID = playerActorNumber;
-        
+
         // Transfer ownership to the driving player
         if (playerActorNumber != -1)
         {
@@ -112,17 +178,22 @@ public class MechWalker : MonoBehaviourPun
             }
         }
     }
-    
+
+    // -------------------------
+    // Grounding / Raycasts
+    // -------------------------
     void CheckIfGrounded()
     {
-        // Check if mech is on the ground using foot points or center
+        bool newIsGrounded = false;
+
+        // Use per-foot checks if available for more precise detection
         if (footPoints != null && footPoints.Length > 0)
         {
             int groundedFeet = 0;
             foreach (Transform foot in footPoints)
             {
                 if (foot == null) continue;
-                
+
                 RaycastHit hit;
                 if (Physics.Raycast(foot.position, Vector3.down, out hit, groundCheckDistance, groundLayer))
                 {
@@ -134,177 +205,154 @@ public class MechWalker : MonoBehaviourPun
                     Debug.DrawRay(foot.position, Vector3.down * groundCheckDistance, Color.red);
                 }
             }
-            
-            // Consider grounded if at least 2 feet are touching ground
-            isGrounded = groundedFeet >= 2;
+
+            newIsGrounded = groundedFeet >= 2;
+            if (newIsGrounded)
+            {
+                groundedTimer = groundedGraceTime;
+            }
+            else
+            {
+                groundedTimer -= Time.fixedDeltaTime;
+            }
+
+            isGrounded = groundedTimer > 0f;
         }
         else
         {
             // Fallback to single raycast from center
             RaycastHit hit;
-            isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, groundCheckDistance, groundLayer);
+            newIsGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, groundCheckDistance, groundLayer);
             
-            if (isGrounded)
+            if (newIsGrounded)
             {
+                groundedTimer = groundedGraceTime;
                 Debug.DrawRay(transform.position, Vector3.down * hit.distance, Color.green);
             }
             else
             {
+                groundedTimer -= Time.fixedDeltaTime;
                 Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
             }
+
+            isGrounded = groundedTimer > 0f;
         }
     }
-    
-    void HandleGravity()
+
+    // -------------------------
+    // Movement & Rotation
+    // -------------------------
+    void HandleMovement()
     {
-        Vector3 pos = transform.position;
+        float v = Input.GetAxis("Vertical");
+        v = Mathf.Clamp(v, 0, 1);
+
+        if(autoPilotEnabled)
+            v = 1f;
 
         if (isGrounded)
         {
-            // Stop falling immediately when grounded
-            verticalVelocity = 0f;
-
-            // Calculate average ground height from feet
-            float heightSum = 0f;
-            int hitCount = 0;
-
-            foreach (Transform foot in footPoints)
-            {
-                if (foot == null) continue;
-
-                if (Physics.Raycast(foot.position, Vector3.down, out RaycastHit hit, groundCheckDistance * 2f, groundLayer))
-                {
-                    heightSum += hit.point.y;
-                    hitCount++;
-                }
-            }
-
-            if (hitCount > 0)
-            {
-                float avgGroundY = heightSum / hitCount;
-                float desiredY = avgGroundY + hoverHeight;
-
-                // Smoothly move toward hover height (NO snapping)
-                pos.y = Mathf.MoveTowards(
-                    pos.y,
-                    desiredY,
-                    6f * Time.fixedDeltaTime
-                );
-            }
+            // Move along the current forward (which has been projected onto smoothed normal in rotation)
+            Vector3 moveDir = transform.forward;
+            Vector3 targetVelocity = moveDir * moveSpeed * v;
+            
+            // Preserve vertical velocity component
+            targetVelocity.y = rb.linearVelocity.y;
+            
+            // Smoothly interpolate to target velocity
+            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, Time.fixedDeltaTime * 10f);
         }
         else
         {
-            // Apply gravity while airborne
-            verticalVelocity -= gravity * Time.fixedDeltaTime;
-            verticalVelocity = Mathf.Max(verticalVelocity, -maxFallSpeed);
-
-            pos.y += verticalVelocity * Time.fixedDeltaTime;
+            // Allow some air control but maintain momentum
+            Vector3 moveDir = transform.forward;
+            Vector3 airControl = moveDir * moveSpeed * v * 0.3f;
+            
+            Vector3 currentHorizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+            Vector3 targetHorizontalVel = currentHorizontalVel + airControl * Time.fixedDeltaTime;
+            
+            rb.linearVelocity = new Vector3(targetHorizontalVel.x, rb.linearVelocity.y, targetHorizontalVel.z);
         }
-
-        transform.position = pos;
     }
 
-    void HandleMovement()
-    {
-        // Forward movement
-        float v = Input.GetAxis("Vertical");
-        
-        // Clamp to only allow forward movement (0 to 1)
-        v = Mathf.Clamp(v, 0, 1);
-        
-        Vector3 moveDir = Vector3.ProjectOnPlane(transform.forward, targetNormal).normalized;
-        transform.position += moveDir * moveSpeed * v * Time.fixedDeltaTime;
-    }
-
-    void HandleRotation()
+    void HandleRotationAndAlignment()
     {
         float h = Input.GetAxis("Horizontal");
-        
-        // Calculate input-based yaw
+
+        // Calculate desired yaw change
         float inputYaw = h * rotationSensitivity;
         inputYaw += h * 0.5f;
-        
-        // Smooth the yaw input
+
         targetYaw = Mathf.SmoothDamp(targetYaw, inputYaw * turnSpeed, ref currentYawVelocity, rotationSmoothTime);
-        
-        // Apply rotation for this frame
-        float yawThisFrame = targetYaw * Time.fixedDeltaTime;
-        Quaternion turnRotation = Quaternion.AngleAxis(yawThisFrame, transform.up);
-        
-        transform.rotation = turnRotation * transform.rotation;
+        float yawDelta = targetYaw * Time.fixedDeltaTime;
+
+        // Get current forward projected onto the surface plane
+        Vector3 currentForward = Vector3.ProjectOnPlane(transform.forward, smoothedNormal).normalized;
+
+        if (currentForward.sqrMagnitude < 0.001f)
+        {
+            currentForward = Vector3.ProjectOnPlane(transform.right, smoothedNormal).normalized;
+        }
+
+        // Rotate the forward around the surface normal
+        Quaternion yawRotation = Quaternion.AngleAxis(yawDelta, smoothedNormal);
+        Vector3 newForward = yawRotation * currentForward;
+
+        // Create target rotation: forward points in new direction, up points along surface normal
+        Quaternion targetRotation = Quaternion.LookRotation(newForward, smoothedNormal);
+
+        // Use MoveRotation for physics-based rotation
+        rb.MoveRotation(targetRotation);
     }
 
-    void AlignToSurface()
+    void AlignToSurfaceOnly()
     {
-        // Calculate average ground normal from foot points
-        if (footPoints == null || footPoints.Length == 0)
+        Vector3 currentForward = Vector3.ProjectOnPlane(transform.forward, smoothedNormal).normalized;
+
+        if (currentForward.sqrMagnitude < 0.001f)
         {
-            // Fallback to single raycast if no foot points assigned
-            CalculateSingleGroundNormal();
+            currentForward = Vector3.ProjectOnPlane(transform.right, smoothedNormal).normalized;
         }
-        else
-        {
-            CalculateAverageGroundNormal();
-        }
+
+        Quaternion targetRotation = Quaternion.LookRotation(currentForward, smoothedNormal);
+        Quaternion newRotation = Quaternion.Slerp(rb.rotation, targetRotation, alignmentSpeed * Time.fixedDeltaTime);
         
-        // Smoothly rotate to align with surface
-        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, targetNormal) * transform.rotation;
-        Quaternion alignedRotation = Quaternion.Slerp(transform.rotation, targetRotation, alignmentSpeed * Time.fixedDeltaTime);
-        
-        transform.rotation = alignedRotation;
+        // Use MoveRotation for physics-based rotation
+        rb.MoveRotation(newRotation);
     }
 
-    void CalculateSingleGroundNormal()
+    // -------------------------
+    // Ground normal estimator
+    // -------------------------
+    Vector3 CalculateGroundNormal()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, groundCheckDistance, groundLayer))
-        {
-            targetNormal = hit.normal;
-            Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.green);
-        }
-        else
-        {
-            targetNormal = Vector3.up;
-            Debug.DrawRay(transform.position, Vector3.down * groundCheckDistance, Color.red);
-        }
-    }
+        if (footPoints == null || footPoints.Length < 3)
+            return Vector3.up;
 
-    void CalculateAverageGroundNormal()
-    {
-        Vector3 normalSum = Vector3.zero;
-        int hitCount = 0;
-        
+        Vector3 sum = Vector3.zero;
+        int count = 0;
+        float rayLen = groundCheckDistance + 0.2f;
+
         foreach (Transform foot in footPoints)
         {
             if (foot == null) continue;
-            
-            RaycastHit hit;
-            if (Physics.Raycast(foot.position, Vector3.down, out hit, groundCheckDistance, groundLayer))
+
+            if (Physics.Raycast(foot.position, Vector3.down, out RaycastHit hit, rayLen, groundLayer))
             {
-                normalSum += hit.normal;
-                hitCount++;
-                
-                Debug.DrawRay(foot.position, Vector3.down * hit.distance, Color.green);
-            }
-            else
-            {
-                Debug.DrawRay(foot.position, Vector3.down * groundCheckDistance, Color.red);
+                sum += hit.normal;
+                count++;
+                Debug.DrawRay(hit.point, hit.normal * 0.5f, Color.cyan);
             }
         }
-        
-        if (hitCount > 0)
-        {
-            targetNormal = (normalSum / hitCount).normalized;
-        }
-        else
-        {
-            targetNormal = Vector3.up;
-        }
+
+        if (count == 0)
+            return Vector3.up;
+
+        return sum.normalized;
     }
 
     void OnDrawGizmosSelected()
     {
-        // Visualize ground check rays
         if (footPoints != null)
         {
             Gizmos.color = Color.red;
@@ -316,41 +364,59 @@ public class MechWalker : MonoBehaviourPun
                 }
             }
         }
-        
-        // Visualize target normal
+
+        // Draw platform check area
+        Vector3 checkPos = platformPoint != null ? platformPoint.position : transform.position + Vector3.up * 1f;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(checkPos, platformCheckRadius);
+
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + targetNormal * 2f);
-        
-        // Visualize forward direction
+        Gizmos.DrawLine(transform.position, transform.position + smoothedNormal * 3f);
+
+        Gizmos.color = Color.white;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.up * 3f);
+
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + transform.forward * 3f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + transform.right * 1.5f);
+
+#if UNITY_EDITOR
+        float angle = Vector3.Angle(smoothedNormal, Vector3.up);
+        UnityEditor.Handles.Label(transform.position + Vector3.up * 4f,
+            $"Slope Angle: {angle:F1}°\nNormal: {smoothedNormal}\nGrounded: {isGrounded}\nVelocity: {(rb != null ? rb.linearVelocity.magnitude : 0):F1}");
+#endif
     }
-    
-    // Public getters for other scripts
+
+    // -------------------------
+    // Public getters
+    // -------------------------
     public bool IsMoving()
     {
         if (currentDriverID != PhotonNetwork.LocalPlayer.ActorNumber)
             return false;
-            
+
         return Input.GetAxis("Vertical") > 0.1f;
     }
-    
+
     public float GetCurrentSpeed()
     {
-        if (currentDriverID != PhotonNetwork.LocalPlayer.ActorNumber)
-            return 0f;
-            
-        return Input.GetAxis("Vertical") * moveSpeed;
+        if (rb == null) return 0f;
+        
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        return horizontalVelocity.magnitude;
     }
-    
+
     public bool IsGrounded()
     {
         return isGrounded;
     }
-    
+
     public float GetVerticalVelocity()
     {
-        return verticalVelocity;
+        if (rb == null) return 0f;
+        return rb.linearVelocity.y;
     }
 
     public bool IsBeingDriven()
@@ -361,5 +427,15 @@ public class MechWalker : MonoBehaviourPun
     public bool IsLocalPlayerDriving()
     {
         return currentDriverID == PhotonNetwork.LocalPlayer.ActorNumber;
+    }
+
+    public Vector3 GetSmoothedNormal()
+    {
+        return smoothedNormal;
+    }
+    
+    public Rigidbody GetRigidbody()
+    {
+        return rb;
     }
 }

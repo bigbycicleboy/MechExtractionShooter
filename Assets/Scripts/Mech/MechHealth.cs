@@ -19,12 +19,10 @@ public class MechHealth : MonoBehaviourPun
     [PunRPC]
     public void TakeDamage(float amount)
     {
-        // Only the owner actually modifies health to avoid desyncs
         if (photonView.IsMine)
         {
             currentHealth -= amount;
             
-            // Sync the new health value to all clients
             photonView.RPC("SyncHealth", RpcTarget.AllBuffered, currentHealth);
             
             if (currentHealth <= 0f)
@@ -56,7 +54,6 @@ public class MechHealth : MonoBehaviourPun
 
     private void Die()
     {
-        // Only the owner destroys the mech
         if (photonView.IsMine)
         {
             Debug.Log("Mech destroyed!");

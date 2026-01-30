@@ -4,115 +4,124 @@ using Photon.Pun;
 public class Ladder : MonoBehaviour
 {
     [Header("Ladder Settings")]
-    [SerializeField] private float climbSpeed = 5f;
-    [SerializeField] private bool requireInputToClimb = true;
-    [SerializeField] private KeyCode climbKey = KeyCode.W;
-    [SerializeField] private KeyCode descendKey = KeyCode.S;
-    
-    [Header("Optional - Auto-Align")]
-    [SerializeField] private bool snapPlayerToLadder = false;
-    [SerializeField] private float snapSpeed = 5f;
-    
-    private PlayerMovement playerInZone;
-    private CharacterController playerController;
-    private PhotonView playerPhotonView;
-    private bool isPlayerOnLadder;
-    
-    void OnTriggerEnter(Collider other)
+    [SerializeField] private float climbSpeed = 4f;
+    [SerializeField] private float snapStrength = 15f;
+
+    [Header("Limits")]
+    [SerializeField] private Transform bottomPoint;
+    [SerializeField] private Transform topPoint;
+
+    [Header("Exit Timing")]
+    [SerializeField] private float exitGraceTime = 0.15f;
+
+    private Rigidbody playerRb;
+    private PhotonView playerView;
+    private bool playerOnLadder;
+
+    private float ladderEnterTime;
+    private float lastVerticalInput;
+
+    // ─────────────────────────────
+    // CALLED BY YOUR INTERACTION SYSTEM
+    // ─────────────────────────────
+    public void EnterLadder()
     {
-        if (other.CompareTag("Player"))
+        if (playerOnLadder)
+            return;
+
+        FindLocalPlayer();
+        if (playerRb == null)
+            return;
+
+        playerOnLadder = true;
+        ladderEnterTime = Time.time;
+
+        playerRb.useGravity = false;
+        playerRb.linearVelocity = Vector3.zero;
+    }
+
+    public void ExitLadder()
+    {
+        if (!playerOnLadder)
+            return;
+
+        playerOnLadder = false;
+
+        playerRb.useGravity = true;
+        playerRb = null;
+        playerView = null;
+    }
+
+    void FixedUpdate()
+    {
+        if (!playerOnLadder || playerRb == null)
+            return;
+
+        // ---- INPUT ----
+        float vertical = 0f;
+        if (Input.GetKey(KeyCode.W)) vertical = 1f;
+        if (Input.GetKey(KeyCode.S)) vertical = -1f;
+        lastVerticalInput = vertical;
+
+        // ---- SNAP TO LADDER ----
+        Vector3 ladderCenter = new Vector3(
+            transform.position.x,
+            playerRb.position.y,
+            transform.position.z
+        );
+
+        Vector3 snapForce = (ladderCenter - playerRb.position) * snapStrength;
+        playerRb.AddForce(snapForce, ForceMode.Acceleration);
+
+        // ---- CLIMB ----
+        playerRb.linearVelocity = new Vector3(
+            0f,
+            vertical * climbSpeed,
+            0f
+        );
+
+        // ---- AUTO EXIT (AFTER GRACE PERIOD) ----
+        if (Time.time < ladderEnterTime + exitGraceTime)
+            return;
+
+        if (lastVerticalInput > 0f && playerRb.position.y >= topPoint.position.y)
         {
-            // Get the PhotonView to check if it's the local player
-            playerPhotonView = other.GetComponent<PhotonView>();
-            
-            // Only interact with the local player
-            if (playerPhotonView != null && !playerPhotonView.IsMine)
-                return;
-            
-            // Get the PlayerMovement component
-            playerInZone = other.GetComponent<PlayerMovement>();
-            
-            // Get CharacterController from player
-            playerController = other.GetComponent<CharacterController>();
-            
-            if (playerInZone != null)
-            {
-                isPlayerOnLadder = true;
-            }
+            ForceExit(Vector3.forward);
+        }
+        else if (lastVerticalInput < 0f && playerRb.position.y <= bottomPoint.position.y)
+        {
+            ForceExit(Vector3.back);
         }
     }
-    
-    void OnTriggerStay(Collider other)
+
+    void ForceExit(Vector3 pushDirection)
     {
-        if (other.CompareTag("Player") && isPlayerOnLadder)
+        ExitLadder();
+
+        if (playerRb != null)
         {
-            // Only process for the local player
-            if (playerPhotonView != null && !playerPhotonView.IsMine)
-                return;
-            
-            // Get vertical input
-            float verticalInput = 0f;
-            
-            if (requireInputToClimb)
-            {
-                // Climb only when pressing up/down keys
-                if (Input.GetKey(climbKey))
-                {
-                    verticalInput = 1f;
-                }
-                else if (Input.GetKey(descendKey))
-                {
-                    verticalInput = -1f;
-                }
-            }
-            else
-            {
-                // Auto-climb when in trigger zone
-                verticalInput = 1f;
-            }
-            
-            // Apply climbing movement
-            if (verticalInput != 0 && playerController != null)
-            {
-                Vector3 climbMovement = Vector3.up * verticalInput * climbSpeed * Time.deltaTime;
-                playerController.Move(climbMovement);
-            }
-            
-            // Optional: Snap player to center of ladder for better alignment
-            if (snapPlayerToLadder)
-            {
-                Vector3 targetPosition = other.transform.position;
-                targetPosition.x = transform.position.x;
-                targetPosition.z = transform.position.z;
-                
-                other.transform.position = Vector3.Lerp(
-                    other.transform.position, 
-                    targetPosition, 
-                    snapSpeed * Time.deltaTime
-                );
-            }
+            playerRb.AddForce(pushDirection * 2f, ForceMode.VelocityChange);
         }
     }
-    
-    void OnTriggerExit(Collider other)
+
+    void FindLocalPlayer()
     {
-        if (other.CompareTag("Player"))
+        PhotonView[] views = FindObjectsByType<PhotonView>(FindObjectsSortMode.None);
+        foreach (PhotonView view in views)
         {
-            // Only clear for the local player
-            PhotonView exitingPhotonView = other.GetComponent<PhotonView>();
-            if (exitingPhotonView != null && !exitingPhotonView.IsMine)
-                return;
+            if (!view.IsMine)
+                continue;
             
-            playerInZone = null;
-            playerController = null;
-            playerPhotonView = null;
-            isPlayerOnLadder = false;
+            if(!view.gameObject.CompareTag("Player"))
+                continue;
+
+            Rigidbody rb = view.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                playerView = view;
+                playerRb = rb;
+                return;
+            }
         }
-    }
-    
-    // Optional: Public method to check if player is on this ladder
-    public bool IsPlayerOnLadder()
-    {
-        return isPlayerOnLadder;
     }
 }

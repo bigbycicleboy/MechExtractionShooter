@@ -12,10 +12,12 @@ GameObject:
   - component: {fileID: 1475276186293211030}
   - component: {fileID: 6264351847436774447}
   - component: {fileID: 2636747603289321692}
+  - component: {fileID: 8912670798033545617}
   - component: {fileID: 4779255086719913153}
   - component: {fileID: 5895400391988538947}
   - component: {fileID: 5356433855892116967}
-  - component: {fileID: 8912670798033545617}
+  - component: {fileID: 7215518227991895327}
+  - component: {fileID: 9005336690750371899}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -121,7 +123,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
-  m_Antialiasing: 2
+  m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
@@ -141,53 +143,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &4779255086719913153
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839685977888637151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70c0ed877e81c9d4280b6d481f2cb71a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
-  mouseSensitivity: 2
-  target: {fileID: 0}
-  offset: {x: 0, y: 0.5, z: 0}
---- !u!114 &5895400391988538947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839685977888637151}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0ffe3ba251166a43bd42ec589d90062, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraController
-  speed: 2.5
-  offset: {x: 0.5, y: 6, z: -7}
-  target: {fileID: 0}
-  mouseSensitivity: 2
-  verticalLookLimit: 30
-  horizontalLookLimit: 60
-  autoFindMech: 1
-  searchInterval: 0.5
---- !u!114 &5356433855892116967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839685977888637151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190768136c191af49b329c2c6842d753, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
 --- !u!114 &8912670798033545617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,3 +165,78 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &4779255086719913153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839685977888637151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70c0ed877e81c9d4280b6d481f2cb71a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
+  mouseSensitivity: 2
+  target: {fileID: 0}
+  offset: {x: 0, y: 0.25, z: 0}
+--- !u!114 &5895400391988538947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839685977888637151}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ffe3ba251166a43bd42ec589d90062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  speed: 2
+  offset: {x: 0.5, y: 7, z: -10}
+  target: {fileID: 0}
+  mouseSensitivity: 2
+  verticalLookLimit: 40
+  horizontalLookLimit: 70
+  autoFindMech: 1
+  searchInterval: 0.5
+--- !u!114 &5356433855892116967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839685977888637151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 190768136c191af49b329c2c6842d753, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
+--- !u!114 &7215518227991895327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839685977888637151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebcafdaa6e41488438b78943d5ad0a78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DisableIfNotMine
+  disableIfMineInstead: 0
+--- !u!114 &9005336690750371899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839685977888637151}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7438febd6b62d042bd31921d4a07e47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildCamera
+  target: {fileID: 0}
+  distance: 10
+  sensitivity: 3

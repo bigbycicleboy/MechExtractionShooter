@@ -3,6 +3,7 @@ using Photon.Pun;
 
 public class PhotonBootStrap : MonoBehaviourPunCallbacks
 {
+    public Transform mechBuilder;
     public GameObject playerPrefab;
     public GameObject mechPrefab;
     public GameObject cameraPrefab;
@@ -24,9 +25,42 @@ public class PhotonBootStrap : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Vector3 spawnPosition = new Vector3(Random.Range(130, 800), 20, Random.Range(130, 800));
-        PhotonNetwork.Instantiate(mechPrefab.name, spawnPosition, Quaternion.identity);
-        PhotonNetwork.Instantiate(playerPrefab.name, spawnPosition + new Vector3(10, 0, 10), Quaternion.identity);
+        // Spawn mech at random position
+        Vector3 mechSpawnPosition = GetRandomGroundPosition();
+        //PhotonNetwork.Instantiate(mechPrefab.name, mechSpawnPosition, Quaternion.identity);
+        
+        // Spawn player close to the mech
+        Vector3 playerSpawnPosition = GetGroundPositionNear(mechBuilder.position);
+        PhotonNetwork.Instantiate(playerPrefab.name, playerSpawnPosition, Quaternion.identity);
+        
         PhotonNetwork.Instantiate(cameraPrefab.name, Vector3.zero, Quaternion.identity);
+    }
+
+    private Vector3 GetRandomGroundPosition()
+    {
+        Vector3 randomXZ = new Vector3(Random.Range(130, 800), 1000, Random.Range(130, 800));
+        RaycastHit hit;
+        
+        if (Physics.Raycast(randomXZ, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
+        {
+            return hit.point + Vector3.up * 5f;
+        }
+        
+        return new Vector3(randomXZ.x, 5, randomXZ.z);
+    }
+
+    private Vector3 GetGroundPositionNear(Vector3 referencePosition)
+    {
+        Vector2 randomCircle = Random.insideUnitCircle * 10;
+        Vector3 offsetPosition = new Vector3(referencePosition.x + randomCircle.x, 1000, referencePosition.z + randomCircle.y);
+        
+        RaycastHit hit;
+        
+        if (Physics.Raycast(offsetPosition, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
+        {
+            return hit.point + Vector3.up * 5;
+        }
+        
+        return new Vector3(offsetPosition.x, referencePosition.y, offsetPosition.z);
     }
 }

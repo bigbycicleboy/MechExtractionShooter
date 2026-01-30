@@ -1,149 +1,124 @@
 using UnityEngine;
 using Photon.Pun;
 
+[RequireComponent(typeof(Rigidbody))]
 public class StayOnWalker : MonoBehaviourPun
 {
     [Header("Walker Settings")]
     [SerializeField] private Transform walker;
     [SerializeField] private bool autoFindWalker = true;
-    
-    [Header("Smooth Transition")]
-    [SerializeField] private bool smoothParenting = true;
-    [SerializeField] private float transitionSpeed = 10f;
-    
-    private bool isOnWalker = false;
-    private CharacterController characterController;
-    private Vector3 lastWalkerPosition;
-    private Quaternion lastWalkerRotation;
-    private bool useManualTracking = false;
+    [SerializeField] private float groundCheckDistance = 1.5f;
+    [SerializeField] private LayerMask walkerLayer;
+
+    [Header("Alignment")]
+    [SerializeField] private bool alignRotationToWalker = true;
+    [SerializeField] private bool yawOnly = true;
+
+    [Header("Anti-Slip")]
+    [SerializeField] private float velocityCompensation = 1f;
+
+    private bool isOnWalker;
+    private Rigidbody rb;
+
+    private Vector3 lastWalkerPos;
+    private Quaternion lastWalkerRot;
 
     void Start()
     {
-        // Get CharacterController component
-        characterController = GetComponent<CharacterController>();
-        
-        // CharacterController can cause issues with parenting, so we'll track manually if needed
-        if (characterController != null)
-        {
-            useManualTracking = true;
-        }
+        rb = GetComponent<Rigidbody>();
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        // Only process for local player
         if (!photonView.IsMine)
             return;
-        
-        if (other.CompareTag("Walker"))
-        {
-            isOnWalker = true;
-            
-            // Auto-find walker transform if not assigned
-            if (walker == null && autoFindWalker)
-            {
-                walker = other.transform;
-            }
-            
-            // If we don't have a CharacterController, use traditional parenting
-            if (!useManualTracking)
-            {
-                transform.parent = walker;
-            }
-            else
-            {
-                // Store initial walker position/rotation for tracking
-                if (walker != null)
-                {
-                    lastWalkerPosition = walker.position;
-                    lastWalkerRotation = walker.rotation;
-                }
-            }
-        }
+
+        if (!other.CompareTag("Walker"))
+            return;
+
+        isOnWalker = true;
+
+        if (walker == null && autoFindWalker)
+            walker = other.transform;
+
+        lastWalkerPos = walker.position;
+        lastWalkerRot = walker.rotation;
     }
 
     void OnTriggerExit(Collider other)
     {
-        // Only process for local player
         if (!photonView.IsMine)
             return;
-        
-        if (other.CompareTag("Walker"))
-        {
-            isOnWalker = false;
-            
-            if (!useManualTracking)
-            {
-                transform.parent = null;
-            }
-        }
+
+        if (!other.CompareTag("Walker"))
+            return;
+
+        ExitWalker();
     }
 
     void FixedUpdate()
     {
-        // Only process for local player
-        if (!photonView.IsMine)
+        if (!photonView.IsMine || !isOnWalker || walker == null)
             return;
-        
-        // Manual tracking for CharacterController (since parenting doesn't work well with it)
-        if (isOnWalker && useManualTracking && walker != null)
+
+        if (!IsStillOnWalker())
         {
-            // Calculate walker movement delta
-            Vector3 walkerMovement = walker.position - lastWalkerPosition;
-            
-            // Calculate walker rotation delta
-            Quaternion walkerRotationDelta = walker.rotation * Quaternion.Inverse(lastWalkerRotation);
-            
-            // Apply movement instantly (no smoothing needed, causes lag)
-            characterController.Move(walkerMovement);
-            
-            // Apply rotation tracking
-            Vector3 pivotOffset = transform.position - walker.position;
-            Vector3 newPivotOffset = walkerRotationDelta * pivotOffset;
-            Vector3 rotationMovement = newPivotOffset - pivotOffset;
-            
-            characterController.Move(rotationMovement);
-            transform.rotation = walkerRotationDelta * transform.rotation;
-            
-            // Update last known walker transform
-            lastWalkerPosition = walker.position;
-            lastWalkerRotation = walker.rotation;
-        }
-    }
-    
-    void Update()
-    {
-        // Only process for local player
-        if (!photonView.IsMine)
+            ExitWalker();
             return;
-        
-        // Update walker transform every frame for smoother tracking
-        if (isOnWalker && walker != null && useManualTracking)
-        {
-            // Store current walker state
-            lastWalkerPosition = walker.position;
-            lastWalkerRotation = walker.rotation;
         }
-    }
 
-    // Public methods for other scripts
-    public bool IsOnWalker()
-    {
-        return isOnWalker;
-    }
+        // ---- POSITION COMPENSATION ----
+        Vector3 walkerDelta = walker.position - lastWalkerPos;
 
-    public Transform GetWalker()
-    {
-        return walker;
-    }
+        // ---- ROTATION COMPENSATION (NO SLIDING) ----
+        Quaternion walkerRotDelta = walker.rotation * Quaternion.Inverse(lastWalkerRot);
 
-    public void SetWalker(Transform newWalker)
-    {
-        walker = newWalker;
-        if (walker != null && isOnWalker)
+        Vector3 relativePos = rb.position - walker.position;
+        relativePos = walkerRotDelta * relativePos;
+
+        Vector3 targetPos = walker.position + relativePos + walkerDelta;
+
+        // ---- VELOCITY COMPENSATION (START / STOP FIX) ----
+        Vector3 walkerVelocity = walkerDelta / Time.fixedDeltaTime;
+        rb.linearVelocity += walkerVelocity * velocityCompensation;
+
+        rb.MovePosition(targetPos);
+
+        // ---- ROTATION ALIGNMENT ----
+        if (alignRotationToWalker)
         {
-            lastWalkerPosition = walker.position;
-            lastWalkerRotation = walker.rotation;
+            Quaternion targetRot = rb.rotation;
+
+            if (yawOnly)
+            {
+                float y = walker.rotation.eulerAngles.y;
+                targetRot = Quaternion.Euler(0f, y, 0f);
+            }
+            else
+            {
+                targetRot = walkerRotDelta * rb.rotation;
+            }
+
+            rb.MoveRotation(targetRot);
         }
+
+        lastWalkerPos = walker.position;
+        lastWalkerRot = walker.rotation;
     }
+
+    bool IsStillOnWalker()
+    {
+        Ray ray = new Ray(transform.position + Vector3.up * 0.1f, Vector3.down);
+        return Physics.Raycast(ray, groundCheckDistance, walkerLayer);
+    }
+
+    void ExitWalker()
+    {
+        isOnWalker = false;
+        walker = null;
+    }
+
+    public bool IsOnWalker() => isOnWalker;
 }

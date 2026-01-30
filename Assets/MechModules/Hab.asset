@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c06262dd378773248970bebfe9fb1b50, type: 3}
+  m_Name: Hab
+  m_EditorClassIdentifier: Assembly-CSharp::ModuleData
+  moduleName: Hab Module
+  category: 0
+  prefab: {fileID: 1066714610443214050, guid: caa16ed0362724e4497e5b7db12f0dc0, type: 3}
+  health: 50
+  weight: 10
+  powerUsage: 5
+  powerGeneration: 0
+  maxChainDepth: 5

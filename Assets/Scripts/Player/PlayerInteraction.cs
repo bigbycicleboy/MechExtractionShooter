@@ -7,6 +7,8 @@ public class PlayerInteraction : MonoBehaviourPun
     [SerializeField] private KeyCode interactKey = KeyCode.E;
     [SerializeField] private float checkRadius = 3f;
     [SerializeField] private LayerMask interactableLayer = -1;
+    [SerializeField] int maxInteractables = 16;
+    [SerializeField] float checkInterval = 0.1f;
     
     [Header("References")]
     [SerializeField] private Transform cameraTransform;
@@ -15,6 +17,8 @@ public class PlayerInteraction : MonoBehaviourPun
     [SerializeField] private InteractionUI interactionUI;
     
     private Interactable currentInteractable;
+    Collider[] overlapResults;
+    float checkTimer;
     
     void Start()
     {
@@ -36,48 +40,75 @@ public class PlayerInteraction : MonoBehaviourPun
         {
             interactionUI = FindFirstObjectByType<InteractionUI>();
         }
+
+        overlapResults = new Collider[maxInteractables];
     }
     
     void Update()
     {
-        // Only process for local player
         if (!photonView.IsMine)
             return;
-        
-        CheckForInteractable();
+
+        checkTimer -= Time.deltaTime;
+        if (checkTimer <= 0f)
+        {
+            checkTimer = checkInterval;
+            CheckForInteractable();
+        }
+
         HandleInput();
     }
     
     void CheckForInteractable()
     {
         Interactable closestInteractable = null;
-        float closestDistance = float.MaxValue;
-        
-        // Find all interactables in range
-        Collider[] colliders = Physics.OverlapSphere(transform.position, checkRadius, interactableLayer);
-        
-        foreach (Collider col in colliders)
+        float closestSqrDistance = float.MaxValue;
+
+        int count = Physics.OverlapSphereNonAlloc(
+            transform.position,
+            checkRadius,
+            overlapResults,
+            interactableLayer
+        );
+
+        Vector3 playerPos = transform.position;
+        Vector3 camForward = cameraTransform ? cameraTransform.forward : Vector3.forward;
+        Vector3 camPos = cameraTransform ? cameraTransform.position : playerPos;
+
+        for (int i = 0; i < count; i++)
         {
-            Interactable interactable = col.GetComponent<Interactable>();
-            
-            if (interactable != null && interactable.CanInteract())
+            Collider col = overlapResults[i];
+            if (col == null) continue;
+
+            // TryGetComponent is faster & GC-free
+            if (!col.TryGetComponent(out Interactable interactable))
+                continue;
+
+            if (!interactable.CanInteract())
+                continue;
+
+            Vector3 toTarget = col.transform.position - playerPos;
+            float sqrDist = toTarget.sqrMagnitude;
+
+            if (sqrDist > interactable.GetRange() * interactable.GetRange())
+                continue;
+
+            // Looking check (cheap dot, no normalize)
+            if (cameraTransform)
             {
-                float distance = Vector3.Distance(transform.position, col.transform.position);
-                
-                // Check if within interactable's range
-                if (distance <= interactable.GetRange() && distance < closestDistance)
-                {
-                    // Optional: Check if player is looking at it
-                    if (IsLookingAt(col.transform))
-                    {
-                        closestDistance = distance;
-                        closestInteractable = interactable;
-                    }
-                }
+                Vector3 toCamTarget = col.transform.position - camPos;
+                float dot = Vector3.Dot(camForward, toCamTarget.normalized);
+                if (dot < 0.5f)
+                    continue;
+            }
+
+            if (sqrDist < closestSqrDistance)
+            {
+                closestSqrDistance = sqrDist;
+                closestInteractable = interactable;
             }
         }
-        
-        // Update current interactable
+
         if (closestInteractable != currentInteractable)
         {
             currentInteractable = closestInteractable;
