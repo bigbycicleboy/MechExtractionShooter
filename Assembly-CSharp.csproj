@@ -49,18 +49,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\FPSDisplay.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\NamePickNewGui.cs" />
     <Compile Include="Assets\Scripts\Misc\DestroyAfterTime.cs" />
     <Compile Include="Assets\Scripts\Player\Interactable.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerInteraction.cs" />
     <Compile Include="Assets\Scripts\Misc\Ladder.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\MechBuilder.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\Utilities\TextToggleIsOnTransition.cs" />
     <Compile Include="Assets\Scripts\Networking\PhotonBootStrap.cs" />
     <Compile Include="Assets\Scripts\Misc\CameraShake.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\ModuleButton.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\MechValidator.cs" />
     <Compile Include="Assets\Scripts\Misc\MatchRotation.cs" />
+    <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
     <Compile Include="Assets\Scripts\Misc\DayNightCycle.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\ChannelSelector.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\Utilities\IgnoreUiRaycastWhenInactive.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\Utilities\EnableOnStart.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\BuildCamera.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\ChatSettings.cs" />
     <Compile Include="Assets\Scripts\Player\StayOnWalker.cs" />
     <Compile Include="Assets\Scripts\Misc\LookAtCamera.cs" />
     <Compile Include="Assets\Scripts\Menu\MenuCamera.cs" />
@@ -69,18 +76,25 @@
     <Compile Include="Assets\Scripts\Mech\MechMovement.cs" />
     <Compile Include="Assets\Scripts\Misc\StayOnObject.cs" />
     <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\CustomImpulse.cs" />
+    <Compile Include="Assets\Scripts\MechMovement.cs" />
     <Compile Include="Assets\Scripts\Mech\Projectile.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\Utilities\ChatIdCheckerUI.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\Misc\MovementManager.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\Utilities\DestroyOnStart.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\MechBootStrap.cs" />
     <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\FPSTest.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\FriendItem.cs" />
     <Compile Include="Assets\Scripts\Mech\MechHealth.cs" />
     <Compile Include="Assets\Scripts\Misc\DisableIfNotMine.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\ModuleData.cs" />
     <Compile Include="Assets\Scripts\Mech\Cannon.cs" />
     <Compile Include="Assets\Scripts\Mech\MechIK.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\ChatNewGui.cs" />
     <Compile Include="Assets\Scripts\UI\InteractionUI.cs" />
     <Compile Include="Assets\Scripts\Mech\MechCameraController.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\SnapPoint.cs" />
+    <Compile Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Code\Utilities\TextButtonTransition.cs" />
     <Compile Include="Assets\Scripts\Misc\PlayerTeleport.cs" />
     <Compile Include="Assets\Scripts\Misc\CameraManager.cs" />
     <Compile Include="Assets\Scripts\Menu\MenuManager.cs" />
@@ -95,6 +109,7 @@
     <None Include="Assets\Photon\PhotonLibs\netstandard2.0\Photon3Unity3D.xml" />
     <None Include="Assets\Packages\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\Packages\TextMesh Pro\Shaders\TMP_SDF-Mobile-2-Pass.shader" />
+    <None Include="Assets\Photon\PhotonChat\Demos\Demo Chat\Resources\OpenSans\Apache License.txt" />
     <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
     <None Include="Assets\Packages\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\Packages\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
@@ -691,6 +706,18 @@
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="sfw.net">
+      <HintPath>Library\PackageCache\com.spoiledcat.git@5eb312ed44ac\sfw\sfw.net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SpoiledCat.Git.Localization">
+      <HintPath>Library\PackageCache\com.spoiledcat.git@5eb312ed44ac\Localization\SpoiledCat.Git.Localization.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Posix">
+      <HintPath>Library\PackageCache\com.spoiledcat.git@5eb312ed44ac\Mono.Posix\Mono.Posix.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
@@ -1301,6 +1328,10 @@
       <HintPath>Library\ScriptAssemblies\Unity.ProBuilder.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.Editor.Tasks">
+      <HintPath>Library\ScriptAssemblies\Unity.Editor.Tasks.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
       <Private>False</Private>
@@ -1373,6 +1404,10 @@
       <HintPath>Library\ScriptAssemblies\Unity.Multiplayer.Center.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="com.spoiledcat.git">
+      <HintPath>Library\ScriptAssemblies\com.spoiledcat.git.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.ProBuilder.AssetIdRemapUtility">
       <HintPath>Library\ScriptAssemblies\Unity.ProBuilder.AssetIdRemapUtility.dll</HintPath>
       <Private>False</Private>
@@ -1432,7 +1467,10 @@
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj" />
     <ProjectReference Include="PhotonRealtime.csproj" />
     <ProjectReference Include="PhotonChat.csproj" />
+    <ProjectReference Include="PhotonUnityNetworking.Demos.csproj" />
+    <ProjectReference Include="PunDemos.DemoHubEditor.csproj" />
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj" />
+    <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj" />
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
