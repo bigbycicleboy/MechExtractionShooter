@@ -57,9 +57,6 @@ public class MechWalker : MonoBehaviourPun
         
         // Configure mech rigidbody
         rb.mass = mechMass;
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         
         if (debugPlatformMovement)
         {

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Cockpit
   m_EditorClassIdentifier: Assembly-CSharp::ModuleData
   moduleName: Cockpit Module
-  prefab: {fileID: 0}
-  snapType: 0
-  techTier: 1
+  category: 0
+  prefab: {fileID: 1066714610443214050, guid: d43a69ebbc8f95e4093739ce95fec13a, type: 3}
   health: 100
-  powerUsage: 10
   weight: 8
+  powerUsage: 10
+  powerGeneration: 0
+  maxChainDepth: 5

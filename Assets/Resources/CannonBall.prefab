@@ -145,8 +145,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   damage: 5
-  lifetime: 5
-  impactEffect: {fileID: 1100295874759642096, guid: e0a1c9e56f533d944bd6eaba4b011c34, type: 3}
+  lifetime: 7
+  impactEffect: {fileID: 8003118067525614995, guid: cc5635aeba3e3d24c9a7610ca13a0281, type: 3}
   explodeSound: {fileID: 8301408409566274676}
 --- !u!54 &3108445908024908771
 Rigidbody:
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3928c8774b6c84b932f92b2c641d1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DestroyAfterTime
-  lifetime: 5
+  lifetime: 10
 --- !u!114 &1040414343636653688
 MonoBehaviour:
   m_ObjectHideFlags: 0

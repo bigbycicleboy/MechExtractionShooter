@@ -48,6 +48,7 @@
     <Analyzer Include="D:\unity\6000.3.2f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\Misc\DestroyAfterTime.cs" />
     <Compile Include="Assets\Scripts\Player\Interactable.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerInteraction.cs" />
@@ -58,15 +59,20 @@
     <Compile Include="Assets\Scripts\MechBuilding\ModuleButton.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\MechValidator.cs" />
     <Compile Include="Assets\Scripts\Misc\MatchRotation.cs" />
+    <Compile Include="Assets\Scripts\Misc\DayNightCycle.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\BuildCamera.cs" />
     <Compile Include="Assets\Scripts\Player\StayOnWalker.cs" />
     <Compile Include="Assets\Scripts\Misc\LookAtCamera.cs" />
+    <Compile Include="Assets\Scripts\Menu\MenuCamera.cs" />
+    <Compile Include="Assets\Scripts\Menu\GameVersion.cs" />
     <Compile Include="Assets\Scripts\Networking\PlayerName.cs" />
     <Compile Include="Assets\Scripts\Mech\MechMovement.cs" />
     <Compile Include="Assets\Scripts\Misc\StayOnObject.cs" />
+    <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\CustomImpulse.cs" />
     <Compile Include="Assets\Scripts\Mech\Projectile.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\MechBootStrap.cs" />
+    <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\FPSTest.cs" />
     <Compile Include="Assets\Scripts\Mech\MechHealth.cs" />
     <Compile Include="Assets\Scripts\Misc\DisableIfNotMine.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\ModuleData.cs" />
@@ -75,10 +81,13 @@
     <Compile Include="Assets\Scripts\UI\InteractionUI.cs" />
     <Compile Include="Assets\Scripts\Mech\MechCameraController.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\SnapPoint.cs" />
+    <Compile Include="Assets\Scripts\Misc\PlayerTeleport.cs" />
     <Compile Include="Assets\Scripts\Misc\CameraManager.cs" />
+    <Compile Include="Assets\Scripts\Menu\MenuManager.cs" />
     <Compile Include="Assets\Scripts\Misc\Event.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\Module.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraController.cs" />
+    <Compile Include="Assets\Packages\Mirza Beig\Cinematic Explosions FREE\Scripts\DemoController.cs" />
     <Compile Include="Assets\Scripts\MechBuilding\ModuleCategory.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1188,6 +1197,10 @@
       <HintPath>Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Cinemachine">
+      <HintPath>Library\ScriptAssemblies\Cinemachine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
       <Private>False</Private>
@@ -1366,6 +1379,10 @@
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="com.unity.cinemachine.editor">
+      <HintPath>Library\ScriptAssemblies\com.unity.cinemachine.editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.ProBuilder">

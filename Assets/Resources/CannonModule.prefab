@@ -45,9 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e53ad8d96b8c69b4b819d9f7468b1383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnapPoint
-  accepts: 00000000
   occupied: 0
   attachedModule: {fileID: 1073426627759408678}
+  accepts: 00000000
+  snapType: 2
 --- !u!135 &86170033838324946
 SphereCollider:
   m_ObjectHideFlags: 0

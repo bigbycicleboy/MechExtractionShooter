@@ -198,7 +198,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1938972003009727060}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Seat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +247,7 @@ Transform:
   m_GameObject: {fileID: 574267014166519074}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 1.94}
+  m_LocalPosition: {x: 0.00000013237162, y: -0.000009397565, z: 3.2146943}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4620,7 +4620,7 @@ GameObject:
   - component: {fileID: 7706050150085448635}
   - component: {fileID: 3383711618940665809}
   - component: {fileID: 5503177262696565035}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4860,8 +4860,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   maxSlopeAngle: 50
-  groundDrag: 5
-  airDrag: 0.5
+  groundDrag: 2
+  airDrag: 2
   mechMass: 1000
   footPoints:
   - {fileID: 158221201305956366}
@@ -4902,7 +4902,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 3
 --- !u!95 &8922912153038171528
 Animator:
@@ -5147,7 +5147,7 @@ GameObject:
   - component: {fileID: 5764140205486826875}
   - component: {fileID: 4798292061623925089}
   - component: {fileID: 1792277244894441973}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11195,7 +11195,7 @@ GameObject:
   - component: {fileID: 9128474047031413813}
   - component: {fileID: 6220962337908418613}
   - component: {fileID: 4678671648048580767}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13596,7 +13596,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3642969529881788354}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Handle Slide Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13633,7 +13633,7 @@ GameObject:
   - component: {fileID: 8680781087567868537}
   - component: {fileID: 7316163979904667642}
   - component: {fileID: 4492358297745114905}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14395,7 +14395,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3058348029682746326, guid: dca504cb0ed9968448d0b50e3701f300, type: 3}
   firePoint: {fileID: 1271431320340140510}
   fireForce: 2000
-  Cooldown: 0.9
+  Cooldown: 1.2
   firesound: {fileID: 7988659467679354790}
 --- !u!82 &7988659467679354790
 AudioSource:
@@ -17157,7 +17157,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8878950718683905751}
   - component: {fileID: 3494017740793897415}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17429,7 +17429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7819832129912821218}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17521,7 +17521,7 @@ Transform:
   m_GameObject: {fileID: 6489365879965963213}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: -3.35}
+  m_LocalPosition: {x: -0, y: 0, z: -3.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17905,7 +17905,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 3058348029682746326, guid: dca504cb0ed9968448d0b50e3701f300, type: 3}
   firePoint: {fileID: 7701643241904169691}
   fireForce: 2000
-  Cooldown: 0.9
+  Cooldown: 1.2
   firesound: {fileID: 4814064028720218119}
 --- !u!82 &4814064028720218119
 AudioSource:
@@ -37048,7 +37048,7 @@ Transform:
   m_GameObject: {fileID: 8255290557597765645}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -8.93}
+  m_LocalPosition: {x: -0.00000022061924, y: 0.000015036104, z: -11.054489}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37079,7 +37079,7 @@ Transform:
   m_GameObject: {fileID: 8260868259612410737}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 2.18}
+  m_LocalPosition: {x: 0, y: -0, z: 2.631}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37095,7 +37095,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8714166949180026839}
   - component: {fileID: 3535751044597436902}
-  m_Layer: 3
+  m_Layer: 14
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37196,7 +37196,7 @@ GameObject:
   - component: {fileID: 4683239571339515396}
   - component: {fileID: 7547704555590513353}
   - component: {fileID: 8679022269500990329}
-  m_Layer: 5
+  m_Layer: 3
   m_Name: HealthUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37394,7 +37394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -42044,7 +42044,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ladder
   climbSpeed: 2.5
-  snapStrength: 15
+  snapStrength: 200
   bottomPoint: {fileID: 7189166082907241251}
   topPoint: {fileID: 7823525642498641793}
   exitGraceTime: 0.15
@@ -42061,7 +42061,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactionPrompt: Press E to interact
-  interactionRange: 2
+  interactionRange: 3
   canInteractMultipleTimes: 1
   cooldownTime: 0.5
   useToggleMode: 1
@@ -42317,6 +42317,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlepBag
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 60cdb69c0c8baed478932ef102f47750, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -42430,7 +42434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -49143,7 +49147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ladder
   climbSpeed: 2.5
-  snapStrength: 15
+  snapStrength: 200
   bottomPoint: {fileID: 938975617540640489}
   topPoint: {fileID: 2356129057675674258}
   exitGraceTime: 0.15
@@ -49160,7 +49164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactionPrompt: Press E to interact
-  interactionRange: 3.5
+  interactionRange: 3
   canInteractMultipleTimes: 1
   cooldownTime: 0.5
   useToggleMode: 1
@@ -49317,7 +49321,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -49638,7 +49642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_Layer
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87cec49ed02b35747b3b60d2133f3094, type: 3}
       propertyPath: m_StaticEditorFlags

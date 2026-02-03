@@ -27,10 +27,10 @@ public class PhotonBootStrap : MonoBehaviourPunCallbacks
     {
         // Spawn mech at random position
         Vector3 mechSpawnPosition = GetRandomGroundPosition();
-        //PhotonNetwork.Instantiate(mechPrefab.name, mechSpawnPosition, Quaternion.identity);
+        PhotonNetwork.Instantiate(mechPrefab.name, mechSpawnPosition, Quaternion.identity);
         
         // Spawn player close to the mech
-        Vector3 playerSpawnPosition = GetGroundPositionNear(mechBuilder.position);
+        Vector3 playerSpawnPosition = GetGroundPositionNear(mechSpawnPosition);
         PhotonNetwork.Instantiate(playerPrefab.name, playerSpawnPosition, Quaternion.identity);
         
         PhotonNetwork.Instantiate(cameraPrefab.name, Vector3.zero, Quaternion.identity);

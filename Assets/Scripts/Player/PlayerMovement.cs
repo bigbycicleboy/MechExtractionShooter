@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviourPun
     [SerializeField] private float jumpBufferTime = 0.1f;
     
     [Header("Ground Check")]
-    [SerializeField] private float groundCheckDistance = 0.3f;
+    [SerializeField] private float groundCheckRadius = 0.3f;
     [SerializeField] private LayerMask groundLayer = -1;
     [SerializeField] private Transform groundCheckPoint;
     
@@ -184,31 +184,38 @@ public class PlayerMovement : MonoBehaviourPun
     
     void CheckGrounded()
     {
-        // Raycast from ground check point
-        Vector3 rayStart = groundCheckPoint.position;
-        Debug.DrawRay(rayStart, Vector3.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
+        Vector3 checkPosition = groundCheckPoint.position;
         
-        RaycastHit hit;
-        isGrounded = Physics.Raycast(rayStart, Vector3.down, out hit, groundCheckDistance, groundLayer);
+        // Simple overlap check
+        isGrounded = Physics.CheckSphere(checkPosition, groundCheckRadius, groundLayer);
         
-        // Track platform if we're on one
-        if (isGrounded && hit.collider != null)
+        // If grounded, do a raycast to find which platform
+        if (isGrounded)
         {
-            // Check if we hit a moving platform (has rigidbody)
-            Rigidbody platformRb = hit.collider.attachedRigidbody;
-            if (platformRb != null && !platformRb.isKinematic)
+            RaycastHit hit;
+            if (Physics.Raycast(groundCheckPoint.position, Vector3.down, out hit, groundCheckRadius * 2f, groundLayer))
             {
-                currentPlatform = platformRb.transform;
-            }
-            else
-            {
-                currentPlatform = null;
+                Rigidbody platformRb = hit.collider.attachedRigidbody;
+                if (platformRb != null && !platformRb.isKinematic)
+                {
+                    currentPlatform = platformRb.transform;
+                }
+                else
+                {
+                    currentPlatform = null;
+                }
             }
         }
         else
         {
             currentPlatform = null;
         }
+    }
+    
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(groundCheckPoint.position, groundCheckRadius);
     }
     
     void HandleMovement()

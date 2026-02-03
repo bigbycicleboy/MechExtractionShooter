@@ -41,7 +41,7 @@ public class StayOnWalker : MonoBehaviourPun
         isOnWalker = true;
 
         if (walker == null && autoFindWalker)
-            walker = other.transform;
+            walker = other.transform.root;
 
         lastWalkerPos = walker.position;
         lastWalkerRot = walker.rotation;
