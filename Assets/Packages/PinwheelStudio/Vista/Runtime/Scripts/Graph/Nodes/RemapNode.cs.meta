@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 80a18a2e74f7f9547a08cc1b0b579632
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Runtime/Scripts/Graph/Nodes/RemapNode.cs
+  uploadId: 817956

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: e810d88d8f46db845bf2e613d7666bac
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Runtime/Resources/Vista/Shaders/Graph/Clamp.shader
+  uploadId: 817956

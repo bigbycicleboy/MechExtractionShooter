@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f760e6e78b6e1454fb260266724b1b4f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Samples/FoliageTemplate/VistaSample_Tree.asset
+  uploadId: 817956

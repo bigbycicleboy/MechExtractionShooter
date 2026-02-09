@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ed1eff295234b7c41a046b96bb72956d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Editor/Scripts/UIElements/ForceGenerateToolbarButton.cs
+  uploadId: 817956

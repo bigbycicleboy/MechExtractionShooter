@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 80b4cbdf50f1e764cb778473e954350f
+AssemblyDefinitionReferenceImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista - Personal/Editor/Pinwheel.Vista.Editor.Personal.asmref
+  uploadId: 817956

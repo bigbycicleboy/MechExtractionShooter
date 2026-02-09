@@ -103,7 +103,7 @@ public class QuadrupedMechIK : MonoBehaviour
     void UpdateFootIK()
     {
         // Check if mech is moving
-        bool isMoving = currentVelocity.magnitude > 0.1f;
+        bool isMoving = currentVelocity.magnitude > 0.25f;
         
         if (!isMoving)
         {

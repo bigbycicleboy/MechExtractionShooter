@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: fa0010f3d185ef442a776e1644867a4b
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Editor/Resources/Vista/Shaders/View3dAxis.shader
+  uploadId: 817956

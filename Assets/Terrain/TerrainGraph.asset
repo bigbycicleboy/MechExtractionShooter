@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd3d01eddcedb04c8e9bd76ec8c3819, type: 3}
+  m_Name: TerrainGraph
+  m_EditorClassIdentifier: Pinwheel.Vista.Runtime::Pinwheel.Vista.Graph.TerrainGraph
+  m_nodeData:
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.HeightOutputNode
+    jsonData: '{"m_groupId":"","m_id":"cafe33e9-f30c-41da-8fcc-c93ddc7e3860","m_visualState":{"m_position":{"x":1247.5194091796875,"y":241.6798858642578},"m_collapsed":false},"m_shouldSplitExecution":false,"m_isBypassed":false}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.TextureOutputNode
+    jsonData: '{"m_groupId":"","m_id":"f563fb23-7d42-4db7-9d59-e7d1bdbc68c4","m_visualState":{"m_position":{"x":1238.15966796875,"y":355.8798522949219},"m_collapsed":true},"m_shouldSplitExecution":false,"m_isBypassed":false,"m_resolutionOverride":1,"m_resolutionMultiplier":1.0,"m_resolutionAbsolute":1024,"m_order":0}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.WeightBlendNode
+    jsonData: '{"m_groupId":"","m_id":"44b0b3eb-8591-407f-9f78-3b430fc8f33b","m_visualState":{"m_position":{"x":1017.559814453125,"y":420.2799987792969},"m_collapsed":false},"m_shouldSplitExecution":false,"m_isBypassed":false,"m_resolutionOverride":1,"m_resolutionMultiplier":1.0,"m_resolutionAbsolute":1024,"m_inputSlots":[{"m_id":0,"m_type":0,"m_name":"Layer
+      0"},{"m_id":1,"m_type":0,"m_name":"Layer 1"}],"m_outputSlots":[{"m_id":100,"m_type":1,"m_name":"Layer
+      0"},{"m_id":101,"m_type":1,"m_name":"Layer 1"}],"m_layerCount":2}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.TextureOutputNode
+    jsonData: '{"m_groupId":"","m_id":"297246fd-ddcb-42fa-a985-a84d40697776","m_visualState":{"m_position":{"x":1247.9991455078125,"y":527.5196533203125},"m_collapsed":true},"m_shouldSplitExecution":false,"m_isBypassed":false,"m_resolutionOverride":1,"m_resolutionMultiplier":1.0,"m_resolutionAbsolute":1024,"m_order":0}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.LayeredNoiseNode
+    jsonData: '{"m_groupId":"","m_id":"77ad7711-ed5f-4a46-9f34-410383078958","m_visualState":{"m_position":{"x":393.4277648925781,"y":260.9359130859375},"m_collapsed":false},"m_shouldSplitExecution":false,"m_isBypassed":false,"m_resolutionOverride":1,"m_resolutionMultiplier":1.0,"m_resolutionAbsolute":1024,"m_baseScale":663.4600219726563,"m_seed":35,"m_layers":[{"m_mode":3,"m_strenth":0.46399998664855959},{"m_mode":1,"m_strenth":0.26600000262260439}]}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.HydraulicErosionNode
+    jsonData: '{"m_groupId":"","m_id":"e92e34f1-4734-42fd-8eb6-347d36d7d4f9","m_visualState":{"m_position":{"x":724.73046875,"y":355.7217102050781},"m_collapsed":false},"m_shouldSplitExecution":true,"m_isBypassed":false,"m_resolutionOverride":1,"m_resolutionMultiplier":1.0,"m_resolutionAbsolute":1024,"m_detailLevel":0.25,"m_iterationCount":30,"m_iterationPerFrame":1,"m_highQualityMode":true,"m_waterSourceAmount":0.5,"m_waterSourceMultiplier":1.0,"m_flowRate":1.0,"m_flowMultiplier":1.0,"m_sedimentCapacity":5.0,"m_sedimentCapacityMultiplier":1.0,"m_erosionRate":1.0,"m_erosionMultiplier":1.0,"m_depositionRate":1.0,"m_depositionMultiplier":1.0,"m_depositionSlopeFactor":1.0,"m_evaporationRate":0.10000000149011612,"m_evaporationMultiplier":1.0,"m_bedRockDepth":10.0,"m_sharpness":0.5,"m_heightScale":1.0,"m_detailHeightScale":1.0,"m_erosionBoost":1.0,"m_depositionBoost":1.0}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.MathNode
+    jsonData: '{"m_groupId":"","m_id":"bf1798b8-2ca7-40e2-92cf-0a0bf4d083ec","m_visualState":{"m_position":{"x":760.515380859375,"y":241.32801818847657},"m_collapsed":false},"m_shouldSplitExecution":false,"m_isBypassed":false,"m_resolutionOverride":1,"m_resolutionMultiplier":1.0,"m_resolutionAbsolute":1024,"m_maths":[{"m_enabled":true,"m_number":0.5,"m_ops":1}]}'
+  m_edgeData:
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.Edge
+    jsonData: '{"m_id":"d7d3b1fa-278b-48db-bcfa-7e50a73f83db","m_outputSlot":{"m_nodeId":"44b0b3eb-8591-407f-9f78-3b430fc8f33b","m_slotId":100},"m_inputSlot":{"m_nodeId":"f563fb23-7d42-4db7-9d59-e7d1bdbc68c4","m_slotId":0}}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.Edge
+    jsonData: '{"m_id":"85b13c70-da8a-4fb4-83f4-678d4a6e6b56","m_outputSlot":{"m_nodeId":"44b0b3eb-8591-407f-9f78-3b430fc8f33b","m_slotId":101},"m_inputSlot":{"m_nodeId":"297246fd-ddcb-42fa-a985-a84d40697776","m_slotId":0}}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.Edge
+    jsonData: '{"m_id":"9e064408-1cf8-41dd-b9d7-fb1131401121","m_outputSlot":{"m_nodeId":"e92e34f1-4734-42fd-8eb6-347d36d7d4f9","m_slotId":100},"m_inputSlot":{"m_nodeId":"44b0b3eb-8591-407f-9f78-3b430fc8f33b","m_slotId":0}}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.Edge
+    jsonData: '{"m_id":"a6856524-c728-429a-b6f1-900eddef2407","m_outputSlot":{"m_nodeId":"77ad7711-ed5f-4a46-9f34-410383078958","m_slotId":100},"m_inputSlot":{"m_nodeId":"bf1798b8-2ca7-40e2-92cf-0a0bf4d083ec","m_slotId":0}}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.Edge
+    jsonData: '{"m_id":"e0747246-9bfd-44c2-8cc9-aeefa4b6d546","m_outputSlot":{"m_nodeId":"bf1798b8-2ca7-40e2-92cf-0a0bf4d083ec","m_slotId":100},"m_inputSlot":{"m_nodeId":"cafe33e9-f30c-41da-8fcc-c93ddc7e3860","m_slotId":0}}'
+  - typeInfo:
+      fullName: Pinwheel.Vista.Graph.Edge
+    jsonData: '{"m_id":"a3aee56a-eb85-4076-a10f-ef6e8fc4a9ee","m_outputSlot":{"m_nodeId":"77ad7711-ed5f-4a46-9f34-410383078958","m_slotId":100},"m_inputSlot":{"m_nodeId":"e92e34f1-4734-42fd-8eb6-347d36d7d4f9","m_slotId":0}}'
+  m_groupData: []
+  m_stickyNoteData: []
+  m_stickyImageData: []
+  m_objectReferences:
+  - m_key: f563fb23-7d42-4db7-9d59-e7d1bdbc68c4.m_terrainLayer
+    m_target: {fileID: 8574412962073106934, guid: bdfe01fabe4924d489478fe9325e9c02, type: 2}
+  - m_key: 297246fd-ddcb-42fa-a985-a84d40697776.m_terrainLayer
+    m_target: {fileID: 8574412962073106934, guid: ac18d185a32fcde4cad700c7bf6df15c, type: 2}
+  m_exposedProperties: []
+  m_debugConfigs:
+    m_resolution: 512
+    m_worldBounds:
+      serializedVersion: 2
+      x: -1000
+      y: 0
+      width: 2000
+      height: 2000
+    m_terrainHeight: 500
+    m_seed: 0
+    m_shouldOutputTempHeight: 0
+  m_allowSplitExecution: 1

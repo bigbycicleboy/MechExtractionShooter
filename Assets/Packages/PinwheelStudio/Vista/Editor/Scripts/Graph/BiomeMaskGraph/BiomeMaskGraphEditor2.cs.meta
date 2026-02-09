@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a8598b0338b1b7c498e83a84b867eea6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Editor/Scripts/Graph/BiomeMaskGraph/BiomeMaskGraphEditor2.cs
+  uploadId: 817956

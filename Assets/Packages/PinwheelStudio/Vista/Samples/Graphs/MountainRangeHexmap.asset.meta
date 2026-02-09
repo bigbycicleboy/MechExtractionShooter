@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c7f89eae211ce774492cab8abfbd71d4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Samples/Graphs/MountainRangeHexmap.asset
+  uploadId: 817956

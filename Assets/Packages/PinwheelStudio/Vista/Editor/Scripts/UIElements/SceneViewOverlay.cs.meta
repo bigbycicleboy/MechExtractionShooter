@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 9f0606e0491e75642a4d51ab3a931861
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Editor/Scripts/UIElements/SceneViewOverlay.cs
+  uploadId: 817956

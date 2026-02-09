@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f3b2d50f639f95843a3ffb101aae8e2a
+labels:
+- VistaCoreIncludeFile
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Runtime/Resources/Vista/Shaders/Includes/OpenSimplex2S.hlsl
+  uploadId: 817956

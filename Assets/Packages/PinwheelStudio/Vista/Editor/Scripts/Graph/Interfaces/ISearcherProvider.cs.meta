@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: cb5e38a9d3aaeee439689ede59bcd24d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Editor/Scripts/Graph/Interfaces/ISearcherProvider.cs
+  uploadId: 817956

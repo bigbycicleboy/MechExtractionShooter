@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 553a674f58e38c94fa1ac82c07bfc59f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista - Big World/Editor/Scripts/NodeEditors/FlattenAtNodeEditor.cs
+  uploadId: 817956

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 23b2092f49b4dc349aef669d14214050
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Samples/FoliageTemplate/VistaSample_GrassDetail.asset
+  uploadId: 817956

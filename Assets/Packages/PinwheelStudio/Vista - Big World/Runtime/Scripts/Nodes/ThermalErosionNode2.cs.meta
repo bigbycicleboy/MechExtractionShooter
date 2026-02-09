@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d8e481472ced00f4292acd758818bba8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista - Big World/Runtime/Scripts/Nodes/ThermalErosionNode2.cs
+  uploadId: 817956

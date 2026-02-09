@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5cb4ed1001cb349489795236a5e95a37
+ComputeShaderImporter:
+  externalObjects: {}
+  currentAPIMask: 2492420
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Runtime/Resources/Vista/Shaders/Graph/TransformPoints.compute
+  uploadId: 817956

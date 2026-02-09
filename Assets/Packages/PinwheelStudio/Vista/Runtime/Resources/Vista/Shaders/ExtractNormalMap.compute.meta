@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 947be76066905dc4c8e5a6fba561c4e0
+ComputeShaderImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Runtime/Resources/Vista/Shaders/ExtractNormalMap.compute
+  uploadId: 817956

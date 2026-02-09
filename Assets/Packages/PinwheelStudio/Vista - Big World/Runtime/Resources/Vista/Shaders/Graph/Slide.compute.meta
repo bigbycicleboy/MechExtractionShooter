@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b4b7716b59aa17548afaf5b386e8f397
+ComputeShaderImporter:
+  externalObjects: {}
+  currentAPIMask: 4
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista - Big World/Runtime/Resources/Vista/Shaders/Graph/Slide.compute
+  uploadId: 817956

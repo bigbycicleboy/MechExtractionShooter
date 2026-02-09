@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 656a131afa2fb214586eb27f4b6eb11e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista - Big World/Editor/Scripts/NodeEditors/WaterFlowNodeEditor.cs
+  uploadId: 817956

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8cbfaa8fa08e58242a02bdee5e47adcd
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Editor/Resources/Vista/Shaders/View3dGridline.shader
+  uploadId: 817956

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 89ea5945371342f4f9f942c15686179c
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 297327
+  packageName: Procedural Terrain (+Hexmap) - Vista - Personal Edition
+  packageVersion: 2024.4.2
+  assetPath: Assets/PinwheelStudio/Vista/Samples/Scenes/Demo_Hexmap.unity
+  uploadId: 817956
